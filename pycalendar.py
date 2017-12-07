@@ -41,9 +41,9 @@ root = Tk()
 tree = ttk.Treeview(root)
 
 tree["columns"]=("one","two","three")
-tree.column("one", width=100 )
-tree.column("two", width=100)
-tree.column("three", width=100 )
+tree.column("one", width=100, stretch = True)
+tree.column("two", width=100, stretch = True)
+tree.column("three", width=100, stretch = True)
 
 tree.heading("one", text="Date Due")
 tree.heading("two", text="Class")
@@ -53,7 +53,7 @@ tree.heading("three", text="Assignment")
 # This creates 6 week view starting from closest past Sunday
 for x in range (1, 9):
 	tree.insert("", 0, closestSundayDate, text=closestSundayDate)
-	tree.insert(closestSundayDate, 0, text="Date Due",values=("x", "x","x"))
+	# tree.insert(closestSundayDate, 0, text="Date Due",values=("x", "x","x"))
 	closestSundayDate += one_week
 
 x = 0
@@ -72,7 +72,6 @@ try:
 			try:
 				obj = pickle.load(openfile)
 				tareaList.append(obj)
-				print(obj.datedue)
 			except EOFError:
 				break
 except (OSError, IOError) as e:
@@ -81,12 +80,12 @@ except (OSError, IOError) as e:
 	
 
 
-# a = 0
-# for obj in enumerate(tareaList):
-	# closestSundayTarea = tareaList[a].datedue - (datetime.timedelta(days= (tareaList[a].datedue.weekday() + 1)))
-	# tree.insert(closestSundayTarea, 0, text=tareaList[a].datedue,values=(tareaList[a].name, tareaList[a].datedue, tareaList[a].code))
-	# print(obj)
-	# a+=1
+a = 0
+for obj in tareaList:
+	assignmentDate = datetime.datetime.strptime(tareaList[a].datedue, "%Y-%m-%d").date()
+	closestSundayTarea = assignmentDate - (datetime.timedelta(days= (assignmentDate.weekday() + 1)))
+	tree.insert(closestSundayTarea, 0, text=assignmentDate,values=(tareaList[a].name, tareaList[a].datedue, tareaList[a].code))
+	a+=1
 	
 
 #------------------------------------------
@@ -142,7 +141,6 @@ with open('list.pkl', 'wb') as file:
 	for obj in tareaList:
 		pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
-print(tareaList)
 
 
 
